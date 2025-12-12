@@ -1,0 +1,31 @@
+# User requested ignores
+_THE TECH DOCTOR BLOG, AUDIO, VIDEO.md
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Angular
+.angular/
+.vscode/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+test-results/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.idea/
+*.swp
+*.swo
+techdoctor2026-firebase-adminsdk-fbsvc-22b032659e.json

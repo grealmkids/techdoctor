@@ -1,0 +1,130 @@
+<div *ngIf="loading" class="loading">Loading...</div>
+<div *ngIf="blog" class="blog-detail fade-in">
+    <!-- Back Link (Outside Banner) -->
+    <div class="nav-container">
+        <a routerLink="/blogs" class="back-link-dark">
+            <span class="arrow">←</span> Back to Articles
+        </a>
+    </div>
+
+    <!-- Hero Banner -->
+    <div class="banner">
+        <div class="banner-bg"
+            [style.background-image]="'url(' + (blog.banner_image || 'assets/placeholder.jpg') + ')'"></div>
+        <div class="banner-content">
+            <div class="category-badge" *ngIf="blog.category_name">{{ blog.category_name }}</div>
+            <h1 class="title">{{ blog.title }}</h1>
+            <div class="meta">
+                <span class="date">{{ blog.created_at | date:'longDate' }}</span>
+                <span class="dot">•</span>
+                <span class="read-time" *ngIf="blog.podcast_duration_seconds">{{ Math.ceil(blog.podcast_duration_seconds
+                    / 60) }} min listen</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Content Column (Now Single Column) -->
+        <main class="content-col">
+            <!-- Media CTAs -->
+            <div class="media-cta-row">
+                <!-- Audio CTA -->
+                <button *ngIf="blog.podcast_published && blog.podcast_url" class="media-cta-btn audio"
+                    (click)="openAudioModal()">
+                    <span class="icon">▶</span>
+                    <span class="text">Play Episode</span>
+                    <span class="duration" *ngIf="blog.podcast_duration_seconds">{{
+                        Math.ceil(blog.podcast_duration_seconds / 60) }} min</span>
+                </button>
+
+                <!-- Video CTA -->
+                <button *ngIf="blog.youtube_url" class="media-cta-btn video" (click)="openVideoModal()">
+                    <span class="icon">📺</span>
+                    <span class="text">Watch Video</span>
+                </button>
+            </div>
+
+            <!-- Article Body -->
+            <article class="markdown-body" [innerHTML]="blog.content | markdown">
+            </article>
+
+            <div class="divider"></div>
+
+            <!-- Engagement Bar -->
+            <div class="engagement-bar">
+                <button class="engage-btn like" [class.active]="liked" (click)="likeBlog()">
+                    <span class="icon">{{ liked ? '❤️' : '🤍' }}</span>
+                    <span class="count">{{ blog.likes || 0 }}</span>
+                </button>
+                <div class="share-wrapper">
+                    <button class="engage-btn share" (click)="shareBlog()">
+                        <span class="icon">📤</span>
+                        <span class="text">Share Article</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Bottom Author Section (Redesigned) -->
+            <div class="author-section-bottom">
+                <div class="author-avatar"
+                    [style.background-image]="'url(' + (blog.author_image || 'assets/default-avatar.png') + ')'"></div>
+                <div class="author-info">
+                    <h3 class="author-name">{{ blog.author_name || 'Tech Doctor' }}</h3>
+                    <p class="author-role">{{ blog.author_profession || 'Tech Enthusiast' }}</p>
+                    <div class="author-bio">
+                        <p>Providing insights into the latest tech trends and web development strategies.</p>
+                    </div>
+                </div>
+                <!-- Author Contact Pills -->
+                <div class="author-contact-pills">
+                    <a *ngIf="blog.author_email" [href]="'mailto:' + blog.author_email" class="pill-btn email">
+                        ✉️ <span>{{ blog.author_email }}</span>
+                    </a>
+                    <a *ngIf="blog.author_whatsapp" [href]="'https://wa.me/' + blog.author_whatsapp" target="_blank"
+                        class="pill-btn whatsapp">
+                        💬 <span>Chat on WhatsApp</span>
+                    </a>
+                    <a *ngIf="blog.author_linkedin" [href]="blog.author_linkedin" target="_blank"
+                        class="pill-btn linkedin">
+                        🔗 <span>LinkedIn Profile</span>
+                    </a>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Dark Mode Audio Modal -->
+    <div class="audio-modal-overlay" *ngIf="showAudioPlayer" (click)="closeAudioModal()">
+        <div class="audio-modal" (click)="$event.stopPropagation()">
+            <button class="close-btn" (click)="closeAudioModal()">×</button>
+
+            <div class="modal-content">
+                <div class="podcast-cover"
+                    [style.background-image]="'url(' + (blog.banner_image || 'assets/placeholder.jpg') + ')'"></div>
+                <div class="podcast-info">
+                    <span class="label">NOW PLAYING</span>
+                    <h2 class="bright-text">{{ blog.title }}</h2>
+                    <p class="bright-text">By: {{ blog.author_name }}</p>
+                </div>
+
+                <app-audio-player [url]="blog.podcast_url" [darkMode]="true" [autoPlay]="true">
+                </app-audio-player>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div class="audio-modal-overlay" *ngIf="showVideoPlayer" (click)="closeVideoModal()">
+        <div class="audio-modal video-mode" (click)="$event.stopPropagation()">
+            <button class="close-btn" (click)="closeVideoModal()">×</button>
+            <div class="video-modal-content">
+                <div class="video-wrapper">
+                    <iframe [src]="blog.youtube_url | safe" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

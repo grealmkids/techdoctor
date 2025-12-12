@@ -1,0 +1,168 @@
+<div class="admin-dashboard">
+    <div class="header-actions">
+        <h1>Admin Dashboard</h1>
+        <div class="actions-group">
+            <button class="btn primary" *ngIf="view === 'list'" (click)="switchToForm()">
+                <span class="icon">+</span> Create New
+            </button>
+            <button class="btn outline" *ngIf="view === 'form'" (click)="switchToList()">Cancel</button>
+            <button class="btn danger-text" (click)="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- LIST VIEW -->
+    <div *ngIf="view === 'list'" class="blog-list-container">
+        <div class="blog-grid">
+            <div class="card blog-card" *ngFor="let b of blogs">
+                <div class="card-thumb"
+                    [style.backgroundImage]="'url(' + (b.banner_image || 'assets/placeholder.jpg') + ')'"></div>
+                <div class="card-content">
+                    <h3 class="card-title">{{ b.title }}</h3>
+                    <p class="card-meta">
+                        {{ b.published ? 'Published' : 'Draft' }} • {{ b.created_at | date:'mediumDate' }}
+                        <span *ngIf="b.category_name" class="badge">{{ b.category_name }}</span>
+                    </p>
+                    <div class="card-actions">
+                        <button class="btn icon-btn" (click)="editBlog(b)" title="Edit">✏️</button>
+                        <button class="btn icon-btn delete" (click)="deleteBlog(b.id)" title="Delete">🗑️</button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="blogs.length === 0" class="empty-state">
+                <p>No blogs found. Start by creating one!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORM VIEW -->
+    <div *ngIf="view === 'form'" class="editor-container fade-in">
+        <div class="editor-header">
+            <h2>{{ isEditing ? 'Edit Post' : 'New Post' }}</h2>
+            <div class="editor-actions">
+                <div class="status-toggles">
+                    <label class="toggle-switch">
+                        <input type="checkbox" [(ngModel)]="blog.podcast_published">
+                        <span class="slider"></span>
+                        <span class="label-text">Podcast</span>
+                    </label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" [(ngModel)]="blog.published">
+                        <span class="slider"></span>
+                        <span class="label-text">Publish</span>
+                    </label>
+                </div>
+                <button class="btn primary save-btn" (click)="submitBlog()">
+                    {{ isEditing ? 'Update Post' : 'Publish Post' }}
+                </button>
+            </div>
+        </div>
+
+        <div class="editor-grid">
+            <!-- Left Column: Content -->
+            <div class="editor-main">
+                <div class="card mb-2">
+                    <div class="form-group floating-label">
+                        <input type="text" id="title" [(ngModel)]="blog.title" placeholder=" " required>
+                        <label for="title">Post Title</label>
+                    </div>
+
+                    <div class="form-group floating-label">
+                        <input type="text" id="slug" [(ngModel)]="blog.slug" placeholder=" " required>
+                        <label for="slug">URL Slug</label>
+                    </div>
+
+                    <!-- Category Selector -->
+                    <div class="form-group">
+                        <label class="area-label">Category</label>
+                        <div class="category-select-group">
+                            <select [(ngModel)]="blog.category_id" class="input-sm">
+                                <option value="" disabled>Select Category</option>
+                                <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+                            </select>
+                            <button class="btn outline sm" (click)="showCategoryInput = !showCategoryInput">
+                                {{ showCategoryInput ? 'Cancel' : '+ New' }}
+                            </button>
+                        </div>
+
+                        <div class="new-category-input" *ngIf="showCategoryInput">
+                            <input type="text" [(ngModel)]="newCategoryName" placeholder="New Category Name"
+                                class="input-sm">
+                            <button class="btn primary sm" (click)="createCategory()">Add</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group editor-area">
+                        <label class="area-label">Content (Markdown)</label>
+                        <textarea [(ngModel)]="blog.content" rows="15"
+                            placeholder="# Start writing your masterpiece..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Media & Meta -->
+            <div class="editor-sidebar">
+                <!-- Author Panel -->
+                <div class="card sidebar-panel mb-2">
+                    <h3>Author Details</h3>
+                    <div class="media-group">
+                        <label>Author Photo</label>
+                        <app-file-upload label="Photo" accept="image/*" folder="authors/photos"
+                            [initialUrl]="blog.author_image" (urlChange)="setAuthorImage($event)">
+                        </app-file-upload>
+                    </div>
+                    <div class="form-group floating-label sm">
+                        <input type="text" [(ngModel)]="blog.author_name" placeholder=" " class="input-sm">
+                        <label>Full Name</label>
+                    </div>
+                    <div class="form-group floating-label sm">
+                        <input type="text" [(ngModel)]="blog.author_profession" placeholder=" " class="input-sm">
+                        <label>Profession (e.g. Senior Editor)</label>
+                    </div>
+                    <div class="form-group floating-label sm">
+                        <input type="text" [(ngModel)]="blog.author_email" placeholder=" " class="input-sm">
+                        <label>Email</label>
+                    </div>
+                    <div class="form-group floating-label sm">
+                        <input type="text" [(ngModel)]="blog.author_whatsapp" placeholder=" " class="input-sm">
+                        <label>WhatsApp</label>
+                    </div>
+                    <div class="form-group floating-label sm">
+                        <input type="text" [(ngModel)]="blog.author_linkedin" placeholder=" " class="input-sm">
+                        <label>LinkedIn</label>
+                    </div>
+                </div>
+
+                <!-- Media Panel -->
+                <div class="card sidebar-panel">
+                    <h3>Media Assets</h3>
+
+                    <div class="media-group">
+                        <label>Banner Image</label>
+                        <app-file-upload label="Banner" accept="image/*" folder="blogs/banners"
+                            [initialUrl]="blog.banner_image" (urlChange)="setBanner($event)">
+                        </app-file-upload>
+                    </div>
+
+                    <div class="media-group">
+                        <label>YouTube Embed</label>
+                        <input type="text" class="input-sm" [(ngModel)]="blog.youtube_url"
+                            placeholder="https://youtube.com/embed/...">
+                    </div>
+
+                    <div class="media-group">
+                        <label>Podcast Audio</label>
+                        <app-file-upload label="Audio" accept="audio/*" folder="podcasts/audio"
+                            [initialUrl]="blog.podcast_url" (urlChange)="setPodcast($event)">
+                        </app-file-upload>
+                    </div>
+
+                    <div class="media-group" *ngIf="blog.podcast_url">
+                        <label>Duration (Seconds)</label>
+                        <input type="number" class="input-sm" [(ngModel)]="blog.podcast_duration_seconds">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

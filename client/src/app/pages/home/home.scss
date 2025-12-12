@@ -1,0 +1,116 @@
+.hero {
+    text-align: center;
+    padding: 6rem 0;
+
+    h1 {
+        font-size: 4rem;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+    }
+
+    p {
+        font-size: 1.25rem;
+        color: #555;
+        margin-bottom: 2.5rem;
+    }
+}
+
+.recent-posts {
+    padding: 4rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    h2 {
+        font-family: 'DM Serif Display', serif;
+        font-size: 2.5rem;
+        color: #0059b3;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #f0f0f0;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+
+.card-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+    color: #212529;
+}
+
+.meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    .badge {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        background: #f8f9fa;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        color: #555;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+}
+
+.cta-row {
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+
+    a {
+        color: #0059b3;
+        font-weight: 600;
+    }
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #888;
+    font-family: 'Inter', sans-serif;
+}

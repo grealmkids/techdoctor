@@ -1,0 +1,137 @@
+.audio-player {
+    background: linear-gradient(135deg, #ffffff 0%, #f9fbfd 100%);
+    border: 1px solid #e1e8ed;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: all 0.3s;
+
+    &.dark-mode {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+
+        .time {
+            color: #ffffff; // max brightness
+            background: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+
+        .play-btn {
+            background: white;
+            color: black;
+            width: 70px;
+            height: 70px;
+            font-size: 2rem;
+
+            &:hover {
+                transform: scale(1.1);
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .icon-btn {
+            color: #ffffff; // max brightness
+            opacity: 0.9;
+
+            &:hover,
+            &.active {
+                color: white;
+                opacity: 1;
+                background: rgba(255, 255, 255, 0.2);
+            }
+        }
+    }
+
+    .waveform-container {
+        width: 100%;
+        opacity: 0.9;
+        cursor: pointer;
+    }
+
+    .controls-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .main-controls {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .play-btn {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: none;
+        background: var(--color-primary, #0059b3);
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); // Bouncy
+
+        &:hover {
+            transform: scale(1.05);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+
+    .icon-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: #666;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+
+        &:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        &.active {
+            color: var(--color-primary, #0059b3);
+            background: rgba(0, 89, 179, 0.1);
+        }
+    }
+
+    .time {
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        color: #495057;
+        background: #f1f3f5;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+    }
+
+    .volume-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        input[type=range] {
+            width: 80px;
+            accent-color: var(--color-primary, #0059b3);
+            cursor: pointer;
+        }
+    }
+}

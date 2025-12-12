@@ -1,0 +1,45 @@
+<div class="blog-list-header">
+    <div class="header-row">
+        <div>
+            <h1>Latest Articles</h1>
+            <p>Read, listen, or watch our latest tech deep dives.</p>
+        </div>
+
+        <div class="filter-container">
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Search articles..." [(ngModel)]="searchQuery"
+                    (ngModelChange)="filterBlogs()">
+            </div>
+
+            <select class="category-select" [(ngModel)]="selectedCategory" (ngModelChange)="filterBlogs()">
+                <option value="">All Topics</option>
+                <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="loading" *ngIf="loading">Loading content...</div>
+
+<div class="grid" *ngIf="!loading">
+    <div class="card blog-card" *ngFor="let blog of filteredBlogs">
+        <a [routerLink]="['/blogs', blog.slug]" class="card-link">
+            <div class="card-image"
+                [style.background-image]="'url(' + (blog.banner_image || 'assets/placeholder.jpg') + ')'"></div>
+            <div class="card-content">
+                <div class="badges">
+                    <span class="badge" *ngIf="blog.podcast_published">🎧 Podcast</span>
+                    <span class="badge" *ngIf="blog.youtube_url">📺 Video</span>
+                </div>
+                <h3>{{ blog.title }}</h3>
+                <div class="meta">
+                    <span>{{ blog.created_at | date:'mediumDate' }}</span>
+                    <span *ngIf="blog.podcast_duration_seconds">• {{ Math.ceil(blog.podcast_duration_seconds / 60) }}
+                        min
+                        listen</span>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>

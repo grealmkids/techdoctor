@@ -1,0 +1,32 @@
+<div class="audio-player" [class.dark-mode]="darkMode">
+    <!-- Waveform -->
+    <div class="waveform-container">
+        <div #waveform></div>
+    </div>
+
+    <!-- Time & Controls Row -->
+    <div class="controls-row">
+        <div class="time">{{ currentTime }} / {{ totalTime }}</div>
+
+        <div class="main-controls">
+            <!-- Loop -->
+            <button class="icon-btn sm" [class.active]="isLooping" (click)="toggleLoop()" title="Loop">
+                🔁
+            </button>
+
+            <!-- Play/Pause -->
+            <button class="play-btn" (click)="togglePlay()">
+                {{ isPlaying ? '⏸' : '▶' }}
+            </button>
+
+            <!-- Volume Container -->
+            <div class="volume-container">
+                <button class="icon-btn sm" (click)="toggleMute()">
+                    {{ isMuted || volume == 0 ? '🔇' : '🔊' }}
+                </button>
+                <input type="range" min="0" max="1" step="0.1" [value]="isMuted ? 0 : volume"
+                    (input)="setVolume($event)">
+            </div>
+        </div>
+    </div>
+</div>

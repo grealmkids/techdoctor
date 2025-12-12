@@ -1,0 +1,41 @@
+.header {
+    padding: 2rem 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 2rem;
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap; // Allow wrapping on small screens
+        gap: 1rem;
+
+        @media (max-width: 600px) {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    .logo {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        letter-spacing: -0.5px;
+    }
+
+    nav {
+        display: flex;
+        gap: 2rem;
+
+        a {
+            font-weight: 500;
+            color: var(--text-color);
+
+            &:hover,
+            &.active {
+                color: var(--primary-color);
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+<div class="hero">
+    <h1>Demystifying Tech <br> for Everyone</h1>
+    <p>Software development, audio, and video explained simple.</p>
+    <a routerLink="/blogs" class="btn">Explore Articles</a>
+</div>
+
+<div class="recent-posts">
+    <h2>Recent Posts</h2>
+
+    <div *ngIf="loading" class="loading">Loading latest content...</div>
+
+    <div class="grid" *ngIf="!loading">
+        <div class="card blog-card" *ngFor="let blog of recentBlogs">
+            <a [routerLink]="['/blogs', blog.slug]" class="card-link">
+                <div class="card-image"
+                    [style.background-image]="'url(' + (blog.banner_image || 'assets/placeholder.jpg') + ')'"></div>
+                <div class="card-content">
+                    <div class="badges">
+                        <span class="badge" *ngIf="blog.podcast_published">🎧 Podcast</span>
+                        <span class="badge" *ngIf="blog.youtube_url">📺 Video</span>
+                    </div>
+                    <h3>{{ blog.title }}</h3>
+                    <div class="meta">
+                        <span>{{ blog.created_at | date:'mediumDate' }}</span>
+                        <span *ngIf="blog.podcast_duration_seconds">• {{ Math.ceil(blog.podcast_duration_seconds / 60)
+                            }} min</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="cta-row">
+        <p>Check out more on the <a routerLink="/blogs">blog page</a>.</p>
+    </div>
+</div>
