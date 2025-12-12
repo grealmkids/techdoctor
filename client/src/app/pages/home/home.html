@@ -13,7 +13,8 @@
         <div class="card blog-card" *ngFor="let blog of recentBlogs">
             <a [routerLink]="['/blogs', blog.slug]" class="card-link">
                 <div class="card-image"
-                    [style.background-image]="'url(' + (blog.banner_image || 'assets/placeholder.jpg') + ')'"></div>
+                    [style.background-image]="'url(' + (blog.banner_image || 'assets/placeholder.jpg') + ')'">
+                </div>
                 <div class="card-content">
                     <div class="badges">
                         <span class="badge" *ngIf="blog.podcast_published">🎧 Podcast</span>

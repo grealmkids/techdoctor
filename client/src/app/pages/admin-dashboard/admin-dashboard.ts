@@ -101,23 +101,41 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   async deleteBlog(id: string) {
-    const res = await Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!'
-    });
+    if (!id) {
+      console.error('❌ Attempted to delete blog with no ID');
+      return;
+    }
+    console.log('🗑️ Attempting to delete blog:', id);
 
-    if (res.isConfirmed) {
+    let isConfirmed = false;
+
+    try {
+      const res = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      });
+      isConfirmed = res.isConfirmed;
+    } catch (err) {
+      console.error('⚠️ Swal failed, falling back to confirm', err);
+      isConfirmed = confirm('Are you sure you want to delete this post?');
+    }
+
+    if (isConfirmed) {
       this.api.deleteBlog(id).subscribe({
         next: () => {
+          console.log('✅ Blog deleted successfully');
           Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
           this.loadBlogs();
         },
-        error: () => Swal.fire('Error', 'Failed to delete.', 'error')
+        error: (err: any) => {
+          console.error('❌ Delete failed:', err);
+          Swal.fire('Error', 'Failed to delete. Check console for details.', 'error');
+        }
       });
     }
   }

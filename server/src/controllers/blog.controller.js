@@ -16,6 +16,9 @@ exports.getAllBlogs = async (req, res) => {
 exports.getBlogBySlug = async (req, res) => {
     const { slug } = req.params;
     try {
+        // Increment views
+        await pool.query('UPDATE blogs SET views = COALESCE(views, 0) + 1 WHERE slug = $1', [slug]);
+
         const result = await pool.query(`
             SELECT b.*, c.name as category_name 
             FROM blogs b 

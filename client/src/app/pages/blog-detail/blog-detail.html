@@ -56,11 +56,22 @@
                     <span class="icon">{{ liked ? '❤️' : '🤍' }}</span>
                     <span class="count">{{ blog.likes || 0 }}</span>
                 </button>
+
                 <div class="share-wrapper">
                     <button class="engage-btn share" (click)="shareBlog()">
                         <span class="icon">📤</span>
-                        <span class="text">Share Article</span>
+                        <span class="text">Share</span>
                     </button>
+                </div>
+
+                <!-- View Count (Monochrome) -->
+                <div class="view-count" *ngIf="blog.views">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span class="count">{{ blog.views | number }}</span>
                 </div>
             </div>
 
@@ -103,14 +114,15 @@
 
             <div class="modal-content">
                 <div class="podcast-cover"
-                    [style.background-image]="'url(' + (blog.banner_image || 'assets/placeholder.jpg') + ')'"></div>
+                    [style.background-image]="'url(' + (blog.banner_image || 'assets/placeholder.jpg') + ')'">
+                </div>
                 <div class="podcast-info">
                     <span class="label">NOW PLAYING</span>
                     <h2 class="bright-text">{{ blog.title }}</h2>
                     <p class="bright-text">By: {{ blog.author_name }}</p>
                 </div>
 
-                <app-audio-player [url]="blog.podcast_url" [darkMode]="true" [autoPlay]="true">
+                <app-audio-player [url]="blog.podcast_url" [darkMode]="true" [autoPlay]="false">
                 </app-audio-player>
             </div>
         </div>
