@@ -33,9 +33,13 @@ export class BlogDetailComponent implements OnInit {
           this.blog = data;
           this.loading = false;
 
-          // Fix YouTube URL for embed
-          if (this.blog.youtube_url && this.blog.youtube_url.includes('watch?v=')) {
-            this.blog.youtube_url = this.blog.youtube_url.replace('watch?v=', 'embed/');
+          // Fix YouTube URL for embed (Robust)
+          if (this.blog.youtube_url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = this.blog.youtube_url.match(regExp);
+            if (match && match[2].length === 11) {
+              this.blog.youtube_url = 'https://www.youtube.com/embed/' + match[2] + '?autoplay=0';
+            }
           }
 
           this.checkLikedStatus();
