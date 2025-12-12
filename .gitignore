@@ -29,3 +29,7 @@ test-results/
 *.swp
 *.swo
 techdoctor2026-firebase-adminsdk-fbsvc-22b032659e.json
+
+# Secrets
+client/src/app/config/firebase.ts
+client/src/app/app.config.ts
