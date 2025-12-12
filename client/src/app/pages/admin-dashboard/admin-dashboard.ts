@@ -38,7 +38,8 @@ export class AdminDashboardComponent implements OnInit {
     author_email: '',
     author_whatsapp: '',
     author_linkedin: '',
-    author_profession: ''
+    author_profession: '',
+    author_bio: ''
   };
 
   constructor(private api: ApiService, public auth: AuthService) { }
@@ -180,7 +181,8 @@ export class AdminDashboardComponent implements OnInit {
       author_email: '',
       author_whatsapp: '',
       author_linkedin: '',
-      author_profession: ''
+      author_profession: '',
+      author_bio: ''
     };
   }
 

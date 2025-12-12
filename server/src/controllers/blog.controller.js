@@ -74,9 +74,9 @@ exports.createBlog = async (req, res) => {
             INSERT INTO blogs (
                 title, slug, content, banner_image, published, podcast_url, 
                 podcast_duration_seconds, podcast_published, youtube_url, youtube_embed_title,
-                category_id, author_name, author_image, author_email, author_whatsapp, author_linkedin, author_profession
+                category_id, author_name, author_image, author_email, author_whatsapp, author_linkedin, author_profession, author_bio
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
             RETURNING *
         `;
         const values = [
@@ -91,7 +91,8 @@ exports.createBlog = async (req, res) => {
             youtube_url,
             youtube_embed_title,
             category_id || null,
-            author_name, authorImageUrl, author_email, author_whatsapp, author_linkedin, author_profession
+            author_name, authorImageUrl, author_email, author_whatsapp, author_linkedin, author_profession,
+            req.body.author_bio || null
         ];
 
         const result = await pool.query(query, values);
@@ -111,7 +112,7 @@ exports.updateBlog = async (req, res) => {
 
     const {
         title, slug, content, published, podcast_published, youtube_url, youtube_embed_title, podcast_duration_seconds,
-        category_id, author_name, author_email, author_whatsapp, author_linkedin, author_profession
+        category_id, author_name, author_email, author_whatsapp, author_linkedin, author_profession, author_bio
     } = req.body;
 
     try {
@@ -137,8 +138,9 @@ exports.updateBlog = async (req, res) => {
                 podcast_url = $6, podcast_duration_seconds = $7, podcast_published = $8, 
                 youtube_url = $9, youtube_embed_title = $10,
                 category_id = $11, author_name = $12, author_image = $13, 
-                author_email = $14, author_whatsapp = $15, author_linkedin = $16, author_profession = $17
-            WHERE id = $18
+                author_email = $14, author_whatsapp = $15, author_linkedin = $16, author_profession = $17,
+                author_bio = $18, updated_at = NOW()
+            WHERE id = $19
             RETURNING *
         `;
         const values = [
@@ -150,8 +152,11 @@ exports.updateBlog = async (req, res) => {
             youtube_url, youtube_embed_title,
             category_id || null,
             author_name, authorImageUrl, author_email, author_whatsapp, author_linkedin, author_profession,
+            author_bio || null,
             id
         ];
+
+        console.log('🔍 UPDATE Values:', values);
 
         const result = await pool.query(query, values);
         if (result.rows.length === 0) {

@@ -84,8 +84,8 @@
                 <div class="author-info">
                     <h3 class="author-name">{{ blog.author_name || 'Tech Doctor' }}</h3>
                     <p class="author-role">{{ blog.author_profession || 'Tech Enthusiast' }}</p>
-                    <div class="author-bio">
-                        <p>Providing insights into the latest tech trends and web development strategies.</p>
+                    <div class="author-bio" *ngIf="blog.author_bio">
+                        <p>{{ blog.author_bio }}</p>
                     </div>
                 </div>
                 <!-- Author Contact Pills -->
