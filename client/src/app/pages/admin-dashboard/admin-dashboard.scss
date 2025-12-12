@@ -213,7 +213,9 @@ $radius: 12px;
     position: relative;
 
     &.floating-label {
-        input {
+
+        input,
+        textarea {
             width: 100%; // Ensure input takes full width
             padding: 1rem 0.75rem 0.5rem;
             font-size: 1rem;
