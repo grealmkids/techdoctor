@@ -49,13 +49,13 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadBlogs() {
-    this.api.getBlogs().subscribe(blogs => {
+    this.api.getBlogs().subscribe((blogs: any[]) => {
       this.blogs = blogs;
     });
   }
 
   loadCategories() {
-    this.api.getCategories().subscribe(cats => {
+    this.api.getCategories().subscribe((cats: any[]) => {
       this.categories = cats;
     });
   }
@@ -65,7 +65,7 @@ export class AdminDashboardComponent implements OnInit {
     const slug = this.newCategoryName.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
 
     this.api.createCategory(this.newCategoryName, slug).subscribe({
-      next: (cat) => {
+      next: (cat: any) => {
         this.categories.push(cat);
         this.blog.category_id = cat.id;
         this.showCategoryInput = false;
@@ -95,7 +95,7 @@ export class AdminDashboardComponent implements OnInit {
     this.isEditing = true;
     this.view = 'form';
 
-    this.api.getBlogBySlug(b.slug).subscribe(fullBlog => {
+    this.api.getBlogBySlug(b.slug).subscribe((fullBlog: any) => {
       this.blog = { ...this.blog, ...fullBlog };
     });
   }
@@ -137,7 +137,7 @@ export class AdminDashboardComponent implements OnInit {
         Swal.fire('Success', `Blog ${this.isEditing ? 'updated' : 'created'}!`, 'success');
         this.switchToList();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error(err);
         Swal.fire('Error', 'Failed to save blog.', 'error');
       }

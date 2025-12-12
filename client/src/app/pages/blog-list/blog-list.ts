@@ -23,19 +23,19 @@ export class BlogListComponent implements OnInit {
 
   ngOnInit() {
     this.api.getBlogs().subscribe({
-      next: (data) => {
+      next: (data: any[]) => {
         this.allBlogs = data;
         this.filteredBlogs = data;
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to fetch blogs', err);
         this.loading = false;
       }
     });
 
     this.api.getCategories().subscribe({
-      next: (data) => {
+      next: (data: any[]) => {
         this.categories = data;
       }
     });

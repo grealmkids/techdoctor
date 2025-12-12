@@ -29,12 +29,18 @@ export class BlogDetailComponent implements OnInit {
     const slug = this.route.snapshot.paramMap.get('slug');
     if (slug) {
       this.api.getBlogBySlug(slug).subscribe({
-        next: (data) => {
+        next: (data: any) => {
           this.blog = data;
           this.loading = false;
+
+          // Fix YouTube URL for embed
+          if (this.blog.youtube_url && this.blog.youtube_url.includes('watch?v=')) {
+            this.blog.youtube_url = this.blog.youtube_url.replace('watch?v=', 'embed/');
+          }
+
           this.checkLikedStatus();
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error(err);
           this.loading = false;
         }

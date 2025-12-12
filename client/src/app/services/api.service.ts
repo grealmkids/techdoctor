@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Auth } from '@angular/fire/auth';
 
 @Injectable({
     providedIn: 'root'
@@ -8,7 +9,7 @@ import { Observable } from 'rxjs';
 export class ApiService {
     private apiUrl = 'http://localhost:3000/api/v1';
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private auth: Auth) { }
 
     getBlogs(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/blogs`);
@@ -35,10 +36,7 @@ export class ApiService {
 
     // Admin endpoints
     async getHeaders() {
-        // Dynamic import to avoid circular dependency or eager loading issues
-        const { getAuth } = await import('@angular/fire/auth');
-        const auth = getAuth();
-        const token = auth.currentUser ? await auth.currentUser.getIdToken() : '';
+        const token = this.auth.currentUser ? await this.auth.currentUser.getIdToken() : '';
         return {
             headers: { 'Authorization': `Bearer ${token}` }
         };
@@ -80,7 +78,6 @@ export class ApiService {
     uploadFile(formData: FormData): Observable<any> {
         return new Observable(observer => {
             this.getHeaders().then(authOptions => {
-                // Combine headers with reportProgress options
                 const reqOptions = {
                     headers: authOptions.headers,
                     reportProgress: true,

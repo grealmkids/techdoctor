@@ -19,12 +19,12 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.api.getBlogs().subscribe({
-      next: (data) => {
+      next: (data: any[]) => {
         // Take top 3 recent
         this.recentBlogs = data.slice(0, 3);
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error(err);
         this.loading = false;
       }
