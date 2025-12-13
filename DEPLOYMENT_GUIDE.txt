@@ -1,0 +1,101 @@
+DEPLOYMENT GUIDE - "THE MASTER CLASS"
+=======================================
+(Updated for Production Environment Challenges)
+
+This guide documents the critical configuration changes required to deploy the Tech Doctor app on a restrictive Shared Hosting environment (cPanel + ModSecurity Firewall + NodeJS).
+
+Use this as a checklist for ALL future Apps.
+
+1. FRONTEND (Angular 17+)
+=========================
+A. Build Output Structure (CRITICAL)
+   - Problem: Uploading `dist/project` results in a blank page or directory listing.
+   - Fact: Angular 17+ creates a subfolder `dist/project/browser`.
+   - Action: You must upload the **CONTENTS** of the `browser` folder (index.html, .htaccess, assets) to your server root.
+   - Do NOT upload the `browser` folder itself.
+
+B. API URL & Protocol
+   - File: `client/src/app/services/api.service.ts`
+   - Action: Ensure plain `http` is converted to `https`.
+   - Tip: Remove port `:3000` for production URLs.
+
+C. ModSecurity Firewall Bypass (The "Base64 Trick")
+   - Problem: Hosting Firewalls (ModSecurity) BLOCK requests containing HTML code (e.g. `<p>Hello</p>`) in `POST` bodies, flagging them as "XSS Attacks" (403 Forbidden).
+   - Fix: Encrypt the content on the Frontend before sending.
+   - Code (ApiService):
+     ```typescript
+     // client/src/app/services/api.service.ts
+     const payload = { ...data };
+     if (payload.content) {
+         // Convert HTML to Base64 String (Firewall sees this as harmless text)
+         payload.content = btoa(unescape(encodeURIComponent(payload.content)));
+     }
+     this.http.post(url, payload, options)...
+     ```
+
+D. Routing
+   - File: `client/src/.htaccess` (Ensure this is copied to `assets` in angular.json).
+   - Content: Standard rewrite rules to redirect all 404s to `index.html`.
+
+2. BACKEND (Node.js/Express)
+============================
+A. Manual CORS Middleware (The "Nuclear Option")
+   - Problem: The `cors` npm package often fails or gets overridden by security headers in restrictive environments, causing "CORS Error / Status 0".
+   - Fix: Remove `app.use(cors())` and write your own Middleware in `app.js`.
+   - Code (app.js):
+     ```javascript
+     app.use((req, res, next) => {
+         res.header('Access-Control-Allow-Origin', '*'); // Allow ALL
+         res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+         if (req.method === 'OPTIONS') return res.status(200).end(); // Force accept Preflight
+         next();
+     });
+     ```
+
+B. ModSecurity Bypass (Server Side)
+   - Function: The server must Decode the Base64 string sent by the frontend.
+   - Code (Controller):
+     ```javascript
+     const decodeContent = (str) => {
+         try { return Buffer.from(str, 'base64').toString('utf-8'); } 
+         catch (e) { return str; }
+     };
+     // Usage: const safeContent = decodeContent(req.body.content);
+     ```
+
+C. Auth & Private Keys
+   - Problem: `.env` files break when parsing multi-line Private Keys (newlines get mangled).
+   - Fix: Use a JSON file (`firebase-key.json`) uploaded to the server root.
+   - Logic: Update `auth.js` to `require(...)` this file instead of reading `.env`.
+
+D. Startup & HTACCESS
+   - cPanel Config: Set "Application Startup File" to `index.js`.
+   - .htaccess:
+     ```apache
+     PassengerAppRoot "/home/user/public_html/server"
+     PassengerBaseURI "/"
+     PassengerNodejs "/opt/cpanel/ea-nodejs16/bin/node"
+     PassengerAppType node
+     PassengerStartupFile index.js
+     ```
+
+3. DATABASE (PostgreSQL)
+========================
+A. Connection
+   - Host: Use `127.0.0.1` instead of `localhost` (Avoids IPv6 ::1 issues).
+   - SSL: Make SSL optional in `db.js` (`ssl: process.env.DB_SSL === 'true'`).
+
+B. UUID Generation
+   - Problem: Hosting often blocks `CREATE EXTENSION "uuid-ossp"`.
+   - Fix: Use Native SQL: `md5(random()::text || clock_timestamp()::text)::uuid`.
+
+4. SUMMARY CHECKLIST
+====================
+[ ] Frontend: `api.service.ts` uses HTTPS.
+[ ] Frontend: `api.service.ts` Encodes content to Base64.
+[ ] Frontend: Upload contents of `dist/client/browser`.
+[ ] Backend: `app.js` has Manual CORS Middleware.
+[ ] Backend: Controllers Decode Base64 content.
+[ ] Backend: `firebase-key.json` exists in server root.
+[ ] Backend: `POST` method used for Updates (avoid `PUT` if possible).

@@ -1,0 +1,10 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/greatmcj/techdoctorbackend.grealm.org"
+PassengerBaseURI "/"
+PassengerNodejs "/home/greatmcj/nodevenv/techdoctorbackend.grealm.org/22/bin/node"
+PassengerAppType node
+PassengerStartupFile index.js
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+
+# Prevent directory listing
+Options -Indexes

@@ -15,7 +15,7 @@ router.post('/', verifyToken, upload.fields([
     { name: 'author_image', maxCount: 1 }
 ]), blogController.createBlog);
 
-router.put('/:id', verifyToken, upload.fields([
+router.post('/update/:id', verifyToken, upload.fields([
     { name: 'banner_image', maxCount: 1 },
     { name: 'podcast_audio', maxCount: 1 },
     { name: 'author_image', maxCount: 1 }

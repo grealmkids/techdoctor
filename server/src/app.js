@@ -7,8 +7,25 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(helmet());
-app.use(cors());
+// Middleware
+// 1. Manual CORS (The Nuclear Option - Guaranteed to work)
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); // Allow ALL origins
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+    // Intercept OPTIONS method
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    next();
+});
+
+// 2. Security headers (relaxed)
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+}));
+
 app.use(express.json());
 app.use(morgan('dev'));
 

@@ -1,35 +1,35 @@
-# User requested ignores
-_THE TECH DOCTOR BLOG, AUDIO, VIDEO.md
-
-# OS
+# System Files
 Thumbs.db
 .DS_Store
+*.zip
+*.tar
+*.gz
+*.rar
 
 # Node
 node_modules/
 npm-debug.log
 yarn-error.log
 
-# Angular
-.angular/
-.vscode/
+# Build Artifacts
 dist/
-tmp/
-out-tsc/
-bazel-out/
-test-results/
+build/
+client/dist/
+coverage/
+.angular/
 
-# Environment Variables
+# Secrets & Environment Variables (CRITICAL)
 .env
-.env.local
-.env.*.local
+.env.production
+.env.development
+firebase-key.json
+server/firebase-key.json
+client/src/environments/environment.ts
+client/src/environments/environment.prod.ts
 
-# IDEs
-.idea/
-*.swp
-*.swo
-techdoctor2026-firebase-adminsdk-fbsvc-22b032659e.json
+# Specific Files
+_THE TECH DOCTOR BLOG, AUDIO, VIDEO.md
+server/server.zip
+*adminsdk*json
+*firebase-adminsdk*
 
-# Secrets
-client/src/app/config/firebase.ts
-client/src/app/app.config.ts

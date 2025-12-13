@@ -1,35 +1,61 @@
 const admin = require('firebase-admin');
+const path = require('path');
+const fs = require('fs');
 
-// Initialize Firebase Admin (Wrapped in try-catch to avoid crashing if env vars missing during dev)
+let initError = null;
+
 try {
-    if (process.env.FIREBASE_PROJECT_ID) {
+    // STRATEGY: Try loading from JSON file first (Most Reliable)
+    const keyFilePath = path.join(__dirname, '../../firebase-key.json');
+
+    if (fs.existsSync(keyFilePath)) {
+        console.log('🔑 Found firebase-key.json. Using file credentials.');
+        const serviceAccount = require(keyFilePath);
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        console.log('🔥 Firebase Admin Initialized (via JSON file)');
+    }
+    // FALLBACK: Try .env (Legacy/Backup)
+    else if (process.env.FIREBASE_PROJECT_ID) {
+        console.log('⚠️ firebase-key.json not found. Falling back to .env variables.');
+
+        let secretKey = process.env.FIREBASE_PRIVATE_KEY;
+        if (secretKey) {
+            secretKey = secretKey.replace(/\r/g, '').replace(/\\n/g, '\n');
+            const match = secretKey.match(/-----BEGIN PRIVATE KEY-----[\s\S]+?-----END PRIVATE KEY-----/);
+            if (match) secretKey = match[0];
+        }
+
         admin.initializeApp({
             credential: admin.credential.cert({
                 projectId: process.env.FIREBASE_PROJECT_ID,
                 clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+                privateKey: secretKey,
             }),
         });
-        console.log('🔥 Firebase Admin Initialized');
+        console.log('🔥 Firebase Admin Initialized (via .env)');
     } else {
-        console.warn('⚠️ Firebase credentials not found. Auth middleware will run in mockup mode.');
+        console.warn('⚠️ No credentials found. Auth middleware will run in mockup mode.');
     }
 } catch (error) {
     console.error('❌ Firebase Init Error:', error);
+    initError = error;
 }
 
 const verifyToken = async (req, res, next) => {
-    // For development without Firebase credentials, allow bypass if needed (remove in production)
-    if (!process.env.FIREBASE_PROJECT_ID) {
-        // MOCK ADMIN
-        req.user = { email: 'ochalfie@gmail.com', uid: 'mock-admin-uid' };
-        return next();
+    // 1. Diagnostic Check
+    if (admin.apps.length === 0) {
+        return res.status(500).json({
+            error: 'Firebase Initialization Failed on Server',
+            details: initError ? initError.message : 'Unknown Error',
+            suggestion: 'Please upload firebase-key.json to the server root directory.'
+        });
     }
 
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-        console.warn('⚠️ [Auth] No token provided in headers');
         return res.status(401).json({ error: 'No token provided' });
     }
 
@@ -37,17 +63,13 @@ const verifyToken = async (req, res, next) => {
         const decodedToken = await admin.auth().verifyIdToken(token);
         req.user = decodedToken;
 
-        // Admin check as per PRD
         if (req.user.email !== 'ochalfie@gmail.com') {
-            console.warn(`⛔ [Auth] Unauthorized email access attempt: ${req.user.email}`);
-            return res.status(403).json({ error: 'Unauthorized access. Admin only.' });
+            return res.status(403).json({ error: `Unauthorized access. Admin only. Email found: ${req.user.email}` });
         }
 
-        console.log(`✅ [Auth] Verified user: ${req.user.email}`);
         next();
     } catch (error) {
-        console.error('Auth Error:', error);
-        return res.status(403).json({ error: 'Invalid token' });
+        return res.status(403).json({ error: `Invalid token: ${error.message}` });
     }
 };
 
