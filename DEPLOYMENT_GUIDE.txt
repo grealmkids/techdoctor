@@ -33,7 +33,17 @@ C. ModSecurity Firewall Bypass (The "Base64 Trick")
      this.http.post(url, payload, options)...
      ```
 
-D. Routing
+D. Relative Media URLs (Podcast Fix)
+   - Problem: Older database records may contain relative paths (e.g. `/podcasts/...`) instead of full S3 URLs, breaking playback.
+   - Fix: Patch the Component to auto-detect and prepend the S3 Base URL.
+   - Code (BlogDetail):
+     ```typescript
+     if (this.blog.podcast_url.startsWith('/')) {
+         this.blog.podcast_url = 'https://techdoctor.s3.us-east-005.backblazeb2.com' + this.blog.podcast_url;
+     }
+     ```
+
+E. Routing
    - File: `client/src/.htaccess` (Ensure this is copied to `assets` in angular.json).
    - Content: Standard rewrite rules to redirect all 404s to `index.html`.
 

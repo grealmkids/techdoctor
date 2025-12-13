@@ -42,6 +42,13 @@ export class BlogDetailComponent implements OnInit {
             }
           }
 
+          // AUTO-FIX: Handle relative podcast URLs (Legacy Data Support)
+          if (this.blog.podcast_url && this.blog.podcast_url.startsWith('/')) {
+            const s3Base = 'https://techdoctor.s3.us-east-005.backblazeb2.com';
+            this.blog.podcast_url = s3Base + this.blog.podcast_url;
+            console.warn('⚠️ Fixed relative podcast URL:', this.blog.podcast_url);
+          }
+
           this.checkLikedStatus();
         },
         error: (err: any) => {
