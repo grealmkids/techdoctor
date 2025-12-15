@@ -7,7 +7,8 @@ import { Auth } from '@angular/fire/auth';
     providedIn: 'root'
 })
 export class ApiService {
-    private apiUrl = 'https://techdoctorbackend.grealm.org/api/v1';
+    // private apiUrl = 'https://techdoctorbackend.grealm.org/api/v1';
+    private apiUrl = 'http://localhost:3000/api/v1';
 
     constructor(private http: HttpClient, private auth: Auth) { }
 
